@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body { height: 100%; }
+body {
+  @apply text-slate-900 antialiased;
+  background-color: #f0fdff;
+  background-image:
+    radial-gradient(60rem 60rem at 110% -10%, rgba(8, 145, 178, 0.10), transparent 60%),
+    radial-gradient(40rem 40rem at -10% 0%, rgba(249, 115, 22, 0.08), transparent 55%);
+}
+
+@layer components {
+  .btn-primary {
+    @apply w-full rounded-lg bg-brand px-4 py-2.5 text-center text-sm font-semibold text-white shadow-sm shadow-brand/20 transition disabled:opacity-50 hover:bg-brand-dark active:scale-[.99];
+  }
+  .btn-accent {
+    @apply w-full rounded-lg bg-accent px-4 py-2.5 text-center text-sm font-semibold text-white shadow-sm shadow-accent/20 transition disabled:opacity-50 hover:bg-accent-dark active:scale-[.99];
+  }
+  .btn-ghost {
+    @apply rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:border-brand hover:text-brand;
+  }
+}
+
+/* ---------- Écran de lancement (effet Star Wars) ---------- */
+.starfield {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 20% 30%, #fff, transparent),
+    radial-gradient(1px 1px at 80% 20%, #fff, transparent),
+    radial-gradient(1px 1px at 50% 70%, #fff, transparent),
+    radial-gradient(2px 2px at 90% 60%, #fff, transparent),
+    radial-gradient(1px 1px at 35% 85%, #fff, transparent),
+    radial-gradient(1px 1px at 65% 45%, #fff, transparent),
+    radial-gradient(2px 2px at 10% 60%, #fff, transparent),
+    radial-gradient(1px 1px at 75% 90%, #fff, transparent);
+  background-repeat: repeat;
+  background-size: 100% 100%;
+  opacity: 0.7;
+  animation: starfield-fade 4s ease-in forwards;
+}
+
+@keyframes starfield-fade {
+  0% { opacity: 0; }
+  20% { opacity: 0.8; }
+  100% { opacity: 0.4; }
+}
+
+.crawl-perspective {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  perspective: 380px;
+  perspective-origin: 50% 0;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 28%, #000 70%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 28%, #000 70%, transparent 100%);
+}
+
+.crawl-content {
+  position: absolute;
+  top: 100%;
+  width: min(90vw, 560px);
+  color: #18c0e8;
+  text-align: center;
+  transform-origin: 50% 100%;
+  transform: rotateX(28deg);
+  animation: crawl 4s linear forwards;
+}
+
+.crawl-title {
+  font-size: clamp(1.6rem, 6vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  margin-bottom: 1.2rem;
+  color: #22d3ee;
+  text-shadow: 0 0 18px rgba(34, 211, 238, 0.55);
+}
+
+.crawl-text {
+  font-size: clamp(1rem, 3.5vw, 1.4rem);
+  font-weight: 600;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  color: #67e8f9;
+}
+
+@keyframes crawl {
+  0% { top: 100%; transform: rotateX(28deg) translateZ(0); opacity: 1; }
+  100% { top: -220%; transform: rotateX(28deg) translateZ(-650px); opacity: 0.15; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crawl-content { animation-duration: 0.1s; }
+  .starfield { animation: none; opacity: 0.5; }
+}

@@ -1,0 +1,108 @@
+// Débouchage Express — schéma Prisma (dérivé des conventions LTDB, allégé terrain)
+// Règles MONDOR respectées : prix depuis `Tarif`, NAP/tel depuis `Parametre`.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ---------- NAP / paramètres société (source unique de vérité) ----------
+model Parametre {
+  id        String   @id @default(cuid())
+  cle       String   @unique // RAISON_SOCIALE, ADRESSE, TEL_PRINCIPAL, EMAIL_CONTACT, SIRET, TVA, IBAN...
+  valeur    String
+  updatedAt DateTime @updatedAt
+}
+
+// ---------- Grille tarifaire (jamais hardcodé, jamais généré par IA) ----------
+model Tarif {
+  id      String  @id @default(cuid())
+  type    String  @unique // DEBOUCHAGE_MANUEL, HYDROCURAGE, CAMERA, DEPLACEMENT...
+  label   String
+  prixMin Float
+  prixMax Float
+  unite   String  @default("intervention")
+  actif   Boolean @default(true)
+}
+
+// ---------- Technicien (intervenant terrain) ----------
+model Technicien {
+  id            String         @id @default(cuid())
+  nom           String
+  prenom        String
+  telephone     String
+  email         String?
+  actif         Boolean        @default(true)
+  interventions Intervention[]
+}
+
+// ---------- Intervention (entité centrale du mode tout-terrain) ----------
+model Intervention {
+  id          String   @id @default(cuid())
+  reference   String   @unique // DEX-2026-0001
+  dateHeure   DateTime @default(now())
+
+  // Client
+  client      String
+  clientTel   String
+  clientEmail String?
+  adresse     String
+  ville       String
+  codePostal  String
+
+  // Prestation
+  typeService String
+  statut      String   @default("EN_COURS") // EN_COURS, TERMINEE, ENVOYEE, ANNULEE
+
+  technicienId String?
+  technicien   Technicien? @relation(fields: [technicienId], references: [id])
+
+  // Photos (URLs Supabase Storage)
+  photosAvant String[] @default([])
+  photosApres String[] @default([])
+
+  // Travaux supplémentaires détectés avant intervention
+  travaux TravauxSupplementaire[]
+
+  montantHT  Float?
+  montantTVA Float?
+  montantTTC Float?
+  notes      String?
+
+  // Documents générés
+  rapportUrl String?
+  facture    Facture?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ---------- Travaux supplémentaires (upsell saisi sur la photo avant) ----------
+model TravauxSupplementaire {
+  id             String       @id @default(cuid())
+  interventionId String
+  intervention   Intervention @relation(fields: [interventionId], references: [id], onDelete: Cascade)
+  libelle        String
+  quantite       Float        @default(1)
+  prixUnitaire   Float
+  total          Float
+  createdAt      DateTime     @default(now())
+}
+
+// ---------- Facture ----------
+model Facture {
+  id             String       @id @default(cuid())
+  numero         String       @unique // FACT-2026-0001
+  interventionId String       @unique
+  intervention   Intervention @relation(fields: [interventionId], references: [id], onDelete: Cascade)
+  montantHT      Float
+  montantTVA     Float
+  montantTTC     Float
+  pdfUrl         String?
+  emiseLe        DateTime     @default(now())
+}
