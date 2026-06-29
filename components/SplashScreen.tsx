@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 
-const DUREE_MS = 4000;
+const DUREE_MS = 6000;
 
 export function SplashScreen() {
   const [visible, setVisible] = useState(true);
