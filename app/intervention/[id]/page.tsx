@@ -3,13 +3,14 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { euro, dateFR } from "@/lib/format";
 import { EnvoiPanel } from "@/components/EnvoiPanel";
+import { DocumentsActions } from "@/components/DocumentsActions";
 
 export const dynamic = "force-dynamic";
 
 export default async function InterventionDetail({ params }: { params: { id: string } }) {
   const i = await prisma.intervention.findUnique({
     where: { id: params.id },
-    include: { facture: true, travaux: true },
+    include: { facture: true, travaux: true, devis: true },
   });
   if (!i) notFound();
 
@@ -52,17 +53,14 @@ export default async function InterventionDetail({ params }: { params: { id: str
         <PhotoCol title="Après" photos={i.photosApres} />
       </div>
 
-      <div className="rounded-xl bg-white p-4 shadow-sm">
-        <h2 className="mb-2 text-sm font-semibold text-slate-500">Documents</h2>
-        <div className="flex flex-wrap gap-2">
-          {i.rapportUrl
-            ? <a href={i.rapportUrl} target="_blank" className="rounded-lg border border-brand px-3 py-2 text-sm font-medium text-brand">📄 Rapport</a>
-            : <span className="text-sm text-slate-400">Rapport non généré</span>}
-          {i.facture?.pdfUrl
-            ? <a href={i.facture.pdfUrl} target="_blank" className="rounded-lg border border-brand px-3 py-2 text-sm font-medium text-brand">🧾 Facture {i.facture.numero}</a>
-            : <span className="text-sm text-slate-400">Facture non générée</span>}
-        </div>
-      </div>
+      <DocumentsActions
+        interventionId={i.id}
+        rapportUrl={i.rapportUrl}
+        factureUrl={i.facture?.pdfUrl ?? null}
+        factureNumero={i.facture?.numero ?? null}
+        devisUrl={i.devis?.pdfUrl ?? null}
+        devisNumero={i.devis?.numero ?? null}
+      />
 
       <EnvoiPanel
         id={i.id}

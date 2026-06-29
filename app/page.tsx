@@ -71,6 +71,13 @@ export default async function Dashboard() {
         🚐 Démarrer une intervention (mode tout-terrain)
       </Link>
 
+      <Link
+        href="/historique"
+        className="flex items-center justify-center gap-2 rounded-xl border border-brand/30 bg-white px-4 py-3 text-center text-sm font-semibold text-brand shadow-sm transition hover:bg-brand-light"
+      >
+        📚 Historique — devis & factures
+      </Link>
+
       <section>
         <h2 className="mb-2 text-sm font-semibold text-slate-500">Dernières interventions</h2>
         {interventions.length === 0 ? (

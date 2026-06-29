@@ -31,12 +31,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <span className="text-[11px] text-brand-light/90">{APP_TAGLINE}</span>
               </span>
             </Link>
-            <Link
-              href="/intervention/nouvelle"
-              className="rounded-full bg-accent px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:bg-accent-dark"
-            >
-              + Intervention
-            </Link>
+            <nav className="flex items-center gap-2">
+              <Link
+                href="/historique"
+                className="rounded-full bg-white/15 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-white/25"
+              >
+                Historique
+              </Link>
+              <Link
+                href="/intervention/nouvelle"
+                className="rounded-full bg-accent px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:bg-accent-dark"
+              >
+                + Intervention
+              </Link>
+            </nav>
           </div>
         </header>
         <main className="mx-auto max-w-3xl px-4 py-5">{children}</main>

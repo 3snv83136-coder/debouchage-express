@@ -77,6 +77,7 @@ model Intervention {
   // Documents générés
   rapportUrl String?
   facture    Facture?
+  devis      Devis?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -105,4 +106,19 @@ model Facture {
   montantTTC     Float
   pdfUrl         String?
   emiseLe        DateTime     @default(now())
+}
+
+// ---------- Devis ----------
+model Devis {
+  id             String       @id @default(cuid())
+  numero         String       @unique // DEVIS-2026-0001
+  interventionId String       @unique
+  intervention   Intervention @relation(fields: [interventionId], references: [id], onDelete: Cascade)
+  montantHT      Float
+  montantTVA     Float
+  montantTTC     Float
+  pdfUrl         String?
+  statut         String       @default("ENVOYE") // ENVOYE, ACCEPTE, REFUSE
+  valideJusquau  DateTime?
+  creeLe         DateTime     @default(now())
 }
